@@ -306,68 +306,61 @@
     const form = document.getElementById('masterCollegeForm');
     const alertBox = document.getElementById('successAlert');
 
-    form.addEventListener('submit', function(e) {
-        e.preventDefault();
+ // ... Firebase config तोच ठेव ...
 
-        // इमेज वाचणे
-        const fileInput = document.getElementById('gatePhoto');
-        const file = fileInput.files[0];
-        const reader = new FileReader();
+form.addEventListener('submit', function(e) {
+    e.preventDefault();
+    const fileInput = document.getElementById('gatePhoto');
+    const file = fileInput.files[0];
+    const reader = new FileReader();
 
-        reader.onloadend = function() {
-            const base64Image = reader.result;
+    reader.onloadend = function() {
+        const base64Image = reader.result;
 
-            const collegeRecord = {
-                name: document.getElementById('collegeName').value,
-                code: document.getElementById('collegeCode').value,
-                type: document.getElementById('collegeType').value,
-                university: document.getElementById('university').value,
-                branch: document.getElementById('branch').value,
-                district: document.getElementById('district').value,
-                website: document.getElementById('website').value,
-                phone: document.getElementById('phone').value,
-                feesOpen: document.getElementById('feesOpen').value,
-                feesObc: document.getElementById('feesObc').value,
-                feesPwd: document.getElementById('feesPwd').value,
-                obc25: document.getElementById('coObc25').value,
-                pwd25: document.getElementById('coPwd25').value || '-',
-                obc24: document.getElementById('coObc24').value,
-                pwd24: document.getElementById('coPwd24').value || '-',
-                obc23: document.getElementById('coObc23').value,
-                pwd23: document.getElementById('coPwd23').value || '-',
-                high25: document.getElementById('pHigh25').value,
-                avg25: document.getElementById('pAvg25').value,
-                ratio25: document.getElementById('ratio25').value || '-',
-                high24: document.getElementById('pHigh24').value,
-                avg24: document.getElementById('pAvg24').value,
-                ratio24: document.getElementById('ratio24').value || '-',
-                high23: document.getElementById('pHigh23').value,
-                avg23: document.getElementById('pAvg23').value,
-                ratio23: document.getElementById('ratio23').value || '-',
-                recruiters: document.getElementById('recruiters').value,
-                gatePhoto: base64Image,
-                timestamp: Date.now()
-            };
-
-            // 🚀 Firebase मध्ये डेटा पुश करणे
-            database.ref('colleges').push(collegeRecord)
-                .then(() => {
-                    form.reset();
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
-                    alertBox.style.display = 'block';
-                    setTimeout(() => { alertBox.style.display = 'none'; }, 4000);
-                })
-                .catch((error) => {
-                    alert("एरर: " + error.message);
-                });
+        const collegeRecord = {
+            name: document.getElementById('collegeName').value,
+            code: document.getElementById('collegeCode').value,
+            type: document.getElementById('collegeType').value,
+            university: document.getElementById('university').value,
+            branch: document.getElementById('branch').value,
+            district: document.getElementById('district').value,
+            website: document.getElementById('website').value,
+            phone: document.getElementById('phone').value,
+            feesOpen: document.getElementById('feesOpen').value,
+            feesObc: document.getElementById('feesObc').value,
+            feesPwd: document.getElementById('feesPwd').value,
+            obc25: document.getElementById('coObc25').value,
+            pwd25: document.getElementById('coPwd25').value || '-',
+            obc24: document.getElementById('coObc24').value,
+            pwd24: document.getElementById('coPwd24').value || '-',
+            obc23: document.getElementById('coObc23').value,
+            pwd23: document.getElementById('coPwd23').value || '-',
+            // फिक्स केलेले IDs:
+            high25: document.getElementById('high25').value,
+            avg25: document.getElementById('avg25').value,
+            ratio25: document.getElementById('ratio25').value || '-',
+            high24: document.getElementById('high24').value,
+            avg24: document.getElementById('avg24').value,
+            ratio24: document.getElementById('ratio24').value || '-',
+            high23: document.getElementById('high23').value,
+            avg23: document.getElementById('avg23').value,
+            ratio23: document.getElementById('ratio23').value || '-',
+            recruiters: document.getElementById('recruiters').value,
+            gatePhoto: base64Image,
+            timestamp: Date.now()
         };
 
-        if (file) {
-            reader.readAsDataURL(file);
-        } else {
-            alert("कृपया फोटो निवडा!");
-        }
-    });
+        database.ref('colleges').push(collegeRecord)
+            .then(() => {
+                form.reset();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+                alertBox.style.display = 'block';
+                setTimeout(() => { alertBox.style.display = 'none'; }, 4000);
+            })
+            .catch((error) => { alert("एरर: " + error.message); });
+    };
+    if (file) { reader.readAsDataURL(file); } else { alert("कृपया फोटो निवडा!"); }
+});
 </script>
 
 </body>
