@@ -1,0 +1,575 @@
+/* style.css - Quantum CAP Portal Core Styling */
+
+/* १. ग्लोबल सेटिंग्ज आणि व्हेरिएबल्स (Global & Variables) */
+:root {
+    --primary: #0ea5e9;       /* क्लासिक क्वांटम ब्लू */
+    --primary-hover: #0284c7;
+    --dark: #0f172a;          /* डीप डार्क नेव्ही */
+    --dark-light: #1e293b;
+    --bg: #f8fafc;            /* हलका आणि डोळ्यांना न टोचणारा बॅकग्राउंड */
+    --text-main: #1e293b;
+    --text-muted: #64748b;
+    --success: #10b981;       /* एक्सेल डाउनलोडसाठी ग्रीन */
+    --danger: #ef4444;        /* डिलीट बटणसाठी रेड */
+    --radius: 12px;
+    --transition: all 0.3s ease;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+}
+
+body {
+    background-color: var(--bg);
+    color: var(--text-main);
+    line-height: 1.6;
+}
+
+/* २. नेव्हिगेशन बार (Header & Linking Navigation) */
+nav {
+    background: var(--dark);
+    padding: 0.8rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.logo {
+    color: var(--primary);
+    font-size: 1.6rem;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+}
+
+.nav-links {
+    display: flex;
+    gap: 0.5rem;
+}
+
+/* पेजेस लिंक करण्यासाठीची मुख्य डिझाईन */
+.nav-links a {
+    color: #94a3b8;
+    text-decoration: none;
+    padding: 0.6rem 1.2rem;
+    font-weight: 600;
+    font-size: 0.9rem;
+    border-radius: 8px;
+    transition: var(--transition);
+}
+
+/* माऊस नेल्यावर किंवा जे पेज ॲक्टिव्ह आहे त्याला हायलाईट करणे */
+.nav-links a:hover {
+    color: white;
+    background-color: var(--dark-light);
+}
+
+.nav-links a.active {
+    color: white;
+    background-color: var(--primary);
+}
+
+/* ३. लेआउट आणि कंटेनर (Layout & Main Container) */
+.container {
+    max-width: 1100px;
+    margin: 2.5rem auto;
+    padding: 0 1.5rem;
+}
+
+.card {
+    background: white;
+    padding: 2.5rem;
+    border-radius: var(--radius);
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
+    margin-bottom: 2rem;
+}
+
+/* ४. बटन्स (Buttons Design) */
+.btn {
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    border: none;
+    font-weight: 700;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: var(--transition);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.btn-primary { background: var(--primary); color: white; }
+.btn-primary:hover { background: var(--primary-hover); transform: translateY(-1px); }
+
+.btn-success { background: var(--success); color: white; }
+.btn-success:hover { background: #059669; transform: translateY(-1px); }
+
+.btn-danger { background: #fee2e2; color: var(--danger); }
+.btn-danger:hover { background: var(--danger); color: white; }
+
+.btn-move {
+    background: #f1f5f9;
+    color: var(--dark);
+    padding: 0.4rem 0.8rem;
+    font-size: 0.8rem;
+}
+.btn-move:hover { background: #cbd5e1; }
+
+/* ५. फॉर्म्स आणि इनपुट (Forms & Inputs) */
+.form-group {
+    margin-bottom: 1.25rem;
+}
+
+label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: var(--dark-light);
+    font-size: 0.9rem;
+}
+
+input[type="text"],
+input[type="number"],
+select {
+    width: 100%;
+    padding: 0.8rem 1rem;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    background-color: #ffffff;
+    transition: var(--transition);
+}
+
+input:focus, select:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.15);
+}
+
+input[type="file"] {
+    padding: 0.5rem 0;
+}
+
+/* ६. टेबल डिझाईन (List Table) */
+.table-wrapper {
+    background: white;
+    border-radius: var(--radius);
+    overflow: hidden;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+}
+
+th {
+    background: var(--dark);
+    color: white;
+    padding: 1rem 1.25rem;
+    font-weight: 600;
+    font-size: 0.9rem;
+    letter-spacing: 0.5px;
+}
+
+td {
+    padding: 1.25rem;
+    border-bottom: 1px solid #e2e8f0;
+    font-size: 0.95rem;
+}
+
+tr:last-child td {
+    border-bottom: none;
+}
+
+tr:hover td {
+    background-color: #f8fafc;
+}
+
+/* ७. बॅजेस आणि लहान घटक (Badges & Mini Elements) */
+.rank-badge {
+    background: #f1f5f9;
+    color: var(--dark);
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-weight: bold;
+    font-size: 0.9rem;
+}
+
+.cutoff-text {
+    color: #2563eb;
+    font-weight: 700;
+}
+
+.strategy-box {
+    margin-top: 1.5rem;
+    padding: 1.25rem;
+    background: #f0f9ff;
+    border-radius: 8px;
+    border-left: 4px solid var(--primary);
+    font-size: 0.95rem;
+}
+
+/* ८. रिस्पॉन्सिव्ह डिझाईन (Responsive for Mobile) */
+@media (max-width: 600px) {
+    nav {
+        flex-direction: column;
+        gap: 1rem;
+        padding: 1rem;
+    }
+    .nav-links {
+        width: 100%;
+        justify-content: space-around;
+    }
+    .nav-links a {
+        padding: 0.5rem 0.8rem;
+        font-size: 0.8rem;
+    }
+    .container {
+        margin: 1rem auto;
+    }
+    .card {
+        padding: 1.5rem;
+    }
+    table, thead, tbody, th, td, tr {
+        display: block;
+    }
+    thead tr {
+        position: absolute;
+        top: -9999px;
+        left: -9999px;
+    }
+    tr {
+        border: 1px solid #e2e8f0;
+        margin-bottom: 1rem;
+        border-radius: 8px;
+        padding: 0.5rem;
+    }
+    td {
+        border: none;
+        position: relative;
+        padding-left: 50%;
+        text-align: right;
+    }
+    td:before {
+        position: absolute;
+        left: 10px;
+        width: 45%;
+        padding-right: 10px;
+        white-space: nowrap;
+        text-align: left;
+        font-weight: bold;
+    }
+}
+
+
+/* style.css - Quantum CAP Portal Core Styling */
+
+/* १. ग्लोबल सेटिंग्ज आणि व्हेरिएबल्स */
+:root {
+    --primary: #0ea5e9;       
+    --primary-hover: #0284c7;
+    --dark: #0f172a;          
+    --dark-light: #1e293b;
+    --bg: #f8fafc;            
+    --text-main: #1e293b;
+    --text-muted: #64748b;
+    --success: #10b981;       
+    --danger: #ef4444;        
+    --radius: 12px;
+    --transition: all 0.3s ease;
+    --card-bg: #ffffff;
+    --border-color: #e2e8f0;
+    --grid-bg: #f8fafc;
+}
+
+/* २. डार्क थीम व्हेरिएबल्स (जेव्हा डार्क मोड ॲक्टिव्ह असेल) */
+body.dark-mode {
+    --bg: #0f172a;
+    --text-main: #f8fafc;
+    --card-bg: #1e293b;
+    --border-color: #334155;
+    --grid-bg: #111827;
+    --dark-light: #94a3b8;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+}
+
+body {
+    background-color: var(--bg);
+    color: var(--text-main);
+    line-height: 1.6;
+    transition: var(--transition);
+}
+
+/* ३. नेव्हिगेशन बार */
+nav {
+    background: #0f172a; /* नेव्हिगेशन बार नेहमी डार्क राहील */
+    padding: 0.8rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.logo {
+    color: var(--primary);
+    font-size: 1.6rem;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+}
+
+.nav-links {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.nav-links a {
+    color: #94a3b8;
+    text-decoration: none;
+    padding: 0.6rem 1.2rem;
+    font-weight: 600;
+    font-size: 0.9rem;
+    border-radius: 8px;
+    transition: var(--transition);
+}
+
+.nav-links a:hover {
+    color: white;
+    background-color: #1e293b;
+}
+
+.nav-links a.active {
+    color: white;
+    background-color: var(--primary);
+}
+
+/* ४. लेआउट आणि कंटेनर */
+.container {
+    max-width: 1100px;
+    margin: 2.5rem auto;
+    padding: 0 1.5rem;
+}
+
+.card {
+    background: var(--card-bg);
+    padding: 2.5rem;
+    border-radius: var(--radius);
+    border: 1px solid var(--border-color);
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
+    margin-bottom: 2rem;
+    transition: var(--transition);
+}
+
+/* ५. प्रोफाईल डॅशबोर्डसाठी ग्रीड आणि टायटल्स */
+.section-title {
+    color: var(--text-main);
+    border-bottom: 2px solid var(--border-color);
+    padding-bottom: 0.5rem;
+    margin-top: 1.5rem;
+    margin-bottom: 1rem;
+    font-size: 1.2rem;
+}
+
+.info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.info-grid div {
+    background: var(--grid-bg);
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    border-left: 3px solid #cbd5e1;
+    transition: var(--transition);
+}
+
+.info-grid div span {
+    display: block;
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.info-grid div strong {
+    font-size: 1rem;
+    color: var(--text-main);
+}
+
+/* ६. बॅजेस (Status Badges) */
+.status-badge {
+    display: inline-block;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    font-weight: bold;
+}
+.status-yes { background: #d1fae5; color: #065f46; }
+.status-no { background: #fee2e2; color: #991b1b; }
+.status-wait { background: #fef3c7; color: #92400e; }
+
+.strategy-box {
+    margin-top: 1.5rem;
+    padding: 1.25rem;
+    background: #fffbeb;
+    border-radius: 8px;
+    border-left: 4px solid #f59e0b;
+    font-size: 0.95rem;
+}
+body.dark-mode .strategy-box {
+    background: #1e1b4b;
+    border-left-color: var(--primary);
+}
+
+/* ७. बटन्स */
+.btn {
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    border: none;
+    font-weight: 700;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: var(--transition);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.btn-primary { background: var(--primary); color: white; }
+.btn-primary:hover { background: var(--primary-hover); transform: translateY(-1px); }
+
+.btn-success { background: var(--success); color: white; }
+.btn-success:hover { background: #059669; transform: translateY(-1px); }
+
+.btn-danger { background: #fee2e2; color: var(--danger); }
+.btn-danger:hover { background: var(--danger); color: white; }
+
+.btn-move {
+    background: #f1f5f9;
+    color: #0f172a;
+    padding: 0.5rem 1rem;
+    font-size: 0.85rem;
+}
+.btn-move:hover { background: #cbd5e1; }
+
+body.dark-mode .btn-move {
+    background: #334155;
+    color: white;
+}
+
+/* ८. फॉर्म्स आणि इनपुट */
+.form-group {
+    margin-bottom: 1.25rem;
+}
+
+label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: var(--text-main);
+    font-size: 0.9rem;
+}
+
+input[type="text"],
+input[type="number"],
+select {
+    width: 100%;
+    padding: 0.8rem 1rem;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    background-color: var(--card-bg);
+    color: var(--text-main);
+    transition: var(--transition);
+}
+
+input:focus, select:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.15);
+}
+
+/* ९. टेबल डिझाईन */
+.table-wrapper {
+    background: var(--card-bg);
+    border-radius: var(--radius);
+    overflow: hidden;
+    border: 1px solid var(--border-color);
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+}
+
+th {
+    background: #0f172a;
+    color: white;
+    padding: 1rem 1.25rem;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+td {
+    padding: 1.25rem;
+    border-bottom: 1px solid var(--border-color);
+    font-size: 0.95rem;
+    color: var(--text-main);
+}
+
+tr:hover td {
+    background-color: var(--grid-bg);
+}
+
+.rank-badge {
+    background: var(--grid-bg);
+    color: var(--text-main);
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-weight: bold;
+}
+
+/* १०. रिस्पॉन्सिव्ह डिझाईन */
+@media (max-width: 600px) {
+    nav {
+        flex-direction: column;
+        gap: 1rem;
+        padding: 1rem;
+    }
+    .nav-links {
+        width: 100%;
+        justify-content: space-around;
+    }
+}
+
+/* add-college.html साठी अतिरिक्त फिनिशिंग */
+select option {
+    background-color: var(--card-bg);
+    color: var(--text-main);
+}

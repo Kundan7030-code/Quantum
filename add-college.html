@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="mr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quantum - College Entry Portal</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* फॉर्म सेक्शन्स अधिक सुंदर दिसण्यासाठी अतिरिक्त CSS */
+        .form-section {
+            background: var(--grid-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            transition: var(--transition);
+        }
+        .section-header {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #0ea5e9;
+            margin-bottom: 1rem;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 0.4rem;
+        }
+        .form-row-3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.2rem;
+        }
+        .form-row-2 {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.2rem;
+        }
+        @media (max-width: 768px) {
+            .form-row-3, .form-row-2 { grid-template-columns: 1fr; }
+        }
+        /* कट-ऑफ आणि प्लेसमेंट टेबल स्टाइलिंग */
+        .input-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 0.5rem;
+        }
+        .input-table th {
+            background: #1e293b;
+            color: white;
+            padding: 0.6rem;
+            font-size: 0.85rem;
+            text-align: center;
+        }
+        .input-table td {
+            padding: 0.5rem;
+            border: 1px solid var(--border-color);
+            background: var(--card-bg);
+        }
+        .input-table input {
+            padding: 0.5rem;
+            text-align: center;
+        }
+        /* अलर्ट मेसेज */
+        .alert-msg {
+            display: none;
+            background: #d1fae5;
+            color: #065f46;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            font-weight: bold;
+            text-align: center;
+            border: 1px solid #10b981;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- नेव्हिगेशन बार -->
+    <nav>
+        <div class="logo">QUANTUM</div>
+        <div class="nav-links">
+            <a href="index.html">PROFILE</a>
+            <a href="add-college.html" class="active">ADD COLLEGE</a>
+            <a href="preference-list.html">MY LIST</a>
+            <button id="themeToggle" class="btn btn-move" style="margin-left: 1rem; padding: 0.5rem;">🌓 Mode</button>
+        </div>
+    </nav>
+
+    <div class="container" style="max-width: 1000px;">
+        
+        <!-- यशस्वी झाल्याचा मेसेज -->
+        <div id="successAlert" class="alert-msg">🎉 कॉलेजचा मास्टर डेटा यशस्वीरित्या सेव्ह झाला आहे! 'MY LIST' पेजवर तपासा.</div>
+
+        <div class="card">
+            <h2 style="color: #0ea5e9; margin-bottom: 1.5rem; border-bottom: 2px solid var(--border-color); padding-bottom: 0.5rem; text-align: center;">
+                🏫 कॉलेज मास्टर डेटा एंट्री (College Master Entry)
+            </h2>
+            
+            <form id="masterCollegeForm">
+                
+                <!-- SECTION 1: Basic Info -->
+                <div class="form-section">
+                    <div class="section-header">१. मूलभूत माहिती (Basic Information)</div>
+                    <div class="form-group">
+                        <label for="collegeName">कॉलेजचे पूर्ण नाव (College Name)</label>
+                        <input type="text" id="collegeName" placeholder="e.g., COEP Technological University, Pune" required>
+                    </div>
+                    <div class="form-row-3">
+                        <div class="form-group">
+                            <label for="collegeCode">DTE Choice Code</label>
+                            <input type="text" id="collegeCode" placeholder="e.g., 600624510" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="collegeType">कॉलेज प्रकार (Type)</label>
+                            <select id="collegeType" required>
+                                <option value="" disabled selected>निवडा</option>
+                                <option value="Government">Government</option>
+                                <option value="Autonomous (Private)">Autonomous (Private)</option>
+                                <option value="Un-Aided (Private)">Un-Aided (Private)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="university">विद्यापीठ (University)</label>
+                            <input type="text" id="university" placeholder="e.g., RTMNU / SPPU" required>
+                        </div>
+                    </div>
+                    <div class="form-group" style="margin-bottom:0;">
+                        <label for="branch">शाखा / ब्रांच (Branch)</label>
+                        <select id="branch" required>
+                            <option value="" disabled selected>ब्रांच निवडा</option>
+                            <option value="Computer Engineering">Computer Engineering (CO)</option>
+                            <option value="Information Technology">Information Technology (IT)</option>
+                            <option value="AI & Data Science">AI & Data Science (AIDS)</option>
+                            <option value="Electronics & Telecom">Electronics & Telecom (EXTC)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- SECTION 2: Contact & Location -->
+                <div class="form-section">
+                    <div class="section-header">२. संपर्क व ठिकाण (Contact & Location)</div>
+                    <div class="form-row-3">
+                        <div class="form-group" style="margin-bottom:0;">
+                            <label for="district">जिल्हा (District)</label>
+                            <input type="text" id="district" placeholder="e.g., Pune / Nagpur" required>
+                        </div>
+                        <div class="form-group" style="margin-bottom:0;">
+                            <label for="website">अधिकृत वेबसाईट (Website Link)</label>
+                            <input type="url" id="website" placeholder="https://example.com" required>
+                        </div>
+                        <div class="form-group" style="margin-bottom:0;">
+                            <label for="phone">Admission Cell No.</label>
+                            <input type="text" id="phone" placeholder="e.g., 020-25507000" required>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SECTION 3: Fees Section -->
+                <div class="form-section">
+                    <div class="section-header">३. फी रचना (Fees Structure in ₹)</div>
+                    <div class="form-row-3">
+                        <div class="form-group" style="margin-bottom:0;">
+                            <label for="feesOpen">Open Category Fees</label>
+                            <input type="number" id="feesOpen" placeholder="e.g., 120000" required>
+                        </div>
+                        <div class="form-group" style="margin-bottom:0;">
+                            <label for="feesObc">OBC Fees (50% Tuition)</label>
+                            <input type="number" id="feesObc" placeholder="e.g., 65000" required>
+                        </div>
+                        <div class="form-group" style="margin-bottom:0;">
+                            <label for="feesPwd">PwD Fees</label>
+                            <input type="number" id="feesPwd" placeholder="e.g., 15000" required>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SECTION 4: Tabular Cut-off Section -->
+                <div class="form-section">
+                    <div class="section-header">४. गेल्या ३ वर्षांचा कट-ऑफ (MHT-CET Cut-off % Table)</div>
+                    <table class="input-table">
+                        <thead>
+                            <tr>
+                                <th>वर्ष (Year)</th>
+                                <th>OBC Percentile</th>
+                                <th>PwD Percentile (Optional)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td style="text-align: center; font-weight: bold; color: var(--primary);">2025</td>
+                                <td><input type="number" id="coObc25" step="0.01" min="0" max="100" placeholder="e.g., 95.40" required></td>
+                                <td><input type="number" id="coPwd25" step="0.01" min="0" max="100" placeholder="e.g., 78.20"></td>
+                            </tr>
+                            <tr>
+                                <td style="text-align: center; font-weight: bold; color: var(--primary);">2024</td>
+                                <td><input type="number" id="coObc24" step="0.01" min="0" max="100" placeholder="e.g., 94.10" required></td>
+                                <td><input type="number" id="coPwd24" step="0.01" min="0" max="100" placeholder="e.g., 75.50"></td>
+                            </tr>
+                            <tr>
+                                <td style="text-align: center; font-weight: bold; color: var(--primary);">2023</td>
+                                <td><input type="number" id="coObc23" step="0.01" min="0" max="100" placeholder="e.g., 93.85" required></td>
+                                <td><input type="number" id="coPwd23" step="0.01" min="0" max="100" placeholder="e.g., 72.10"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- SECTION 5: Placement Section -->
+                <div class="form-section">
+                    <div class="section-header">५. प्लेसमेंट रेकॉर्ड (3-Year Placements Data)</div>
+                    <div class="form-row-3" style="font-weight: bold; text-align: center; font-size: 0.85rem; color: var(--text-muted); margin-bottom: -0.5rem;">
+                        <div>वर्ष (Year)</div>
+                        <div>Highest Package (LPA)</div>
+                        <div>Average Package (LPA)</div>
+                    </div>
+                    
+                    <!-- SECTION 5: Placement Section -->
+<div class="form-section">
+    <div class="section-header">५. प्लेसमेंट रेकॉर्ड (3-Year Placements Data)</div>
+    
+    <!-- हेडर रो (समजण्यासाठी शीर्षके) -->
+    <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; font-weight: bold; text-align: center; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.5rem; gap: 1rem;">
+        <div>वर्ष (Year)</div>
+        <div>Highest Package (LPA)</div>
+        <div>Average Package (LPA)</div>
+        <div style="color: #10b981;">Placement Ratio (%)</div>
+    </div>
+
+    <!-- २०२५ चा डेटा -->
+    <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 1rem; margin-bottom: 0.8rem; align-items: center;">
+        <div style="text-align: center; font-weight: bold; color: var(--text-main);">2025</div>
+        <input type="number" id="high25" step="0.1" placeholder="उदा. 45.0" required>
+        <input type="number" id="avg25" step="0.1" placeholder="उदा. 6.5" required>
+        <input type="number" id="ratio25" min="0" max="100" placeholder="उदा. 95" style="border-color: #10b981;" required>
+    </div>
+
+    <!-- २०२४ चा डेटा -->
+    <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 1rem; margin-bottom: 0.8rem; align-items: center;">
+        <div style="text-align: center; font-weight: bold; color: var(--text-main);">2024</div>
+        <input type="number" id="high24" step="0.1" placeholder="उदा. 40.0" required>
+        <input type="number" id="avg24" step="0.1" placeholder="उदा. 6.2" required>
+        <input type="number" id="ratio24" min="0" max="100" placeholder="उदा. 88" style="border-color: #10b981;" required>
+    </div>
+
+    <!-- २०२३ चा डेटा -->
+    <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 1rem; margin-bottom: 1rem; align-items: center;">
+        <div style="text-align: center; font-weight: bold; color: var(--text-main);">2023</div>
+        <input type="number" id="high23" step="0.1" placeholder="उदा. 38.5" required>
+        <input type="number" id="avg23" step="0.1" placeholder="उदा. 5.8" required>
+        <input type="number" id="ratio23" min="0" max="100" placeholder="उदा. 85" style="border-color: #10b981;" required>
+    </div>
+
+    <!-- प्रमुख कंपन्यांची नावे -->
+    <div style="margin-top: 1rem;">
+        <label for="recruiters" style="display: block; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.3rem; font-weight: bold;">प्रमुख कंपन्या (Top Recruiters Names)</label>
+        <input type="text" id="recruiters" placeholder="उदा. TCS, Infosys, Cognizant, Nvidia, Amazon" style="width: 100%;">
+    </div>
+</div>
+
+
+                <!-- SECTION 7: Media Section -->
+                <div class="form-section">
+    <div class="section-header">६. मीडिया (Media)</div>
+    <div class="form-group" style="margin-bottom:0;">
+        <label for="gatePhoto">कॉलेज मुख्य गेट फोटो निवडा (Upload Gate Photo)</label>
+        <input type="file" id="gatePhoto" accept="image/*" required>
+        <small style="color: var(--text-muted);">टीप: लहान आकाराचा फोटो अपलोड करा (उदा. < 500KB)</small>
+    </div>
+</div>
+
+
+                <!-- सबमिट बटण -->
+                <div style="display: flex; justify-content: center; margin-top: 1.5rem;">
+                    <button type="submit" class="btn btn-primary" style="width: 250px; padding: 1rem;">💾 Add Master Record</button>
+                </div>
+
+            </form>
+        </div>
+    </div>
+<script>
+    // १. थीम स्विचर लॉजिक
+    const themeToggle = document.getElementById('themeToggle');
+    themeToggle.addEventListener('click', () => {
+        document.body.classList.toggle('dark-mode');
+        const isDark = document.body.classList.contains('dark-mode');
+        localStorage.setItem('quantum_theme', isDark ? 'dark' : 'light');
+    });
+    if (localStorage.getItem('quantum_theme') === 'dark') document.body.classList.add('dark-mode');
+
+    // २. फॉर्म डेटा लोकल स्टोरेजमध्ये सबमिट करणे
+    const form = document.getElementById('masterCollegeForm');
+    const alertBox = document.getElementById('successAlert');
+
+   form.addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    const fileInput = document.getElementById('gatePhoto');
+    const file = fileInput.files[0];
+    const reader = new FileReader();
+
+    // जेव्हा फाईल वाचून पूर्ण होईल, तेव्हा डेटा सेव्ह करा
+    reader.onloadend = function() {
+        const base64Image = reader.result; // फोटोचा लांबलचक कोड तयार झाला
+
+        const collegeRecord = {
+            name: document.getElementById('collegeName').value,
+            code: document.getElementById('collegeCode').value,
+            type: document.getElementById('collegeType').value,
+            university: document.getElementById('university').value,
+            branch: document.getElementById('branch').value,
+            district: document.getElementById('district').value,
+            website: document.getElementById('website').value,
+            phone: document.getElementById('phone').value,
+            feesOpen: document.getElementById('feesOpen').value,
+            feesObc: document.getElementById('feesObc').value,
+            feesPwd: document.getElementById('feesPwd').value,
+            obc25: document.getElementById('coObc25').value,
+            pwd25: document.getElementById('coPwd25').value || '-',
+            obc24: document.getElementById('coObc24').value,
+            pwd24: document.getElementById('coPwd24').value || '-',
+            obc23: document.getElementById('coObc23').value,
+            pwd23: document.getElementById('coPwd23').value || '-',
+            high25: document.getElementById('pHigh25').value,
+            avg25: document.getElementById('pAvg25').value,
+            ratio25: document.getElementById('ratio25').value || '-',
+            high24: document.getElementById('pHigh24').value,
+            avg24: document.getElementById('pAvg24').value,
+            ratio24: document.getElementById('ratio24').value || '-',
+            high23: document.getElementById('pHigh23').value,
+            avg23: document.getElementById('pAvg23').value,
+            ratio23: document.getElementById('ratio23').value || '-',
+            recruiters: document.getElementById('recruiters').value,
+            // 📸 इथे फोटो सेव्ह होत आहे
+            gatePhoto: base64Image 
+        };
+
+        let collegeList = JSON.parse(localStorage.getItem('quantum_master_colleges')) || [];
+        collegeList.push(collegeRecord);
+        localStorage.setItem('quantum_master_colleges', JSON.stringify(collegeList));
+
+        form.reset();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        alertBox.style.display = 'block';
+        setTimeout(() => { alertBox.style.display = 'none'; }, 4000);
+    };
+
+    if (file) {
+        reader.readAsDataURL(file); // फाईल वाचणे सुरू करा
+    } else {
+        alert("कृपया फोटो निवडा!");
+    }
+});
+
+        // सर्व डेटा एका ऑब्जेक्टमध्ये गोळा करणे (नवीन ३ प्लेसमेंट रेशो फील्ड्ससह)
+        const collegeRecord = {
+            name: document.getElementById('collegeName').value,
+            code: document.getElementById('collegeCode').value,
+            type: document.getElementById('collegeType').value,
+            university: document.getElementById('university').value,
+            branch: document.getElementById('branch').value,
+            
+            district: document.getElementById('district').value,
+            website: document.getElementById('website').value,
+            phone: document.getElementById('phone').value,
+            
+            feesOpen: document.getElementById('feesOpen').value,
+            feesObc: document.getElementById('feesObc').value,
+            feesPwd: document.getElementById('feesPwd').value,
+            
+            obc25: document.getElementById('coObc25').value,
+            pwd25: document.getElementById('coPwd25').value || '-',
+            obc24: document.getElementById('coObc24').value,
+            pwd24: document.getElementById('coPwd24').value || '-',
+            obc23: document.getElementById('coObc23').value,
+            pwd23: document.getElementById('coPwd23').value || '-',
+            
+            // प्लेसमेंट डेटा (Packages)
+            high25: document.getElementById('pHigh25').value,
+            avg25: document.getElementById('pAvg25').value,
+            high24: document.getElementById('pHigh24').value,
+            avg24: document.getElementById('pAvg24').value,
+            high23: document.getElementById('pHigh23').value,
+            avg23: document.getElementById('pAvg23').value,
+            
+            // 🎯 नवीन जोडलेला डेटा: ३ वर्षांचा प्लेसमेंट टक्का (%)
+            ratio25: document.getElementById('ratio25').value || '-',
+            ratio24: document.getElementById('ratio24').value || '-',
+            ratio23: document.getElementById('ratio23').value || '-',
+            
+            recruiters: document.getElementById('recruiters').value,
+            gatePhoto: document.getElementById('gatePhoto').value
+        };
+
+        // लोकलस्टोरेजमध्ये जुन्या यादीत नवीन रेकॉर्ड जोडणे
+        let collegeList = JSON.parse(localStorage.getItem('quantum_master_colleges')) || [];
+        collegeList.push(collegeRecord);
+        localStorage.setItem('quantum_master_colleges', JSON.stringify(collegeList));
+
+        // फॉर्म रीसेट करणे आणि सक्सेस मेसेज दाखवणे
+        form.reset();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        alertBox.style.display = 'block';
+        
+        // ४ सेकंदांनंतर मेसेज लपवणे
+        setTimeout(() => {
+            alertBox.style.display = 'none';
+        }, 4000);
+    });
+</script>
+
+</body>
+</html>

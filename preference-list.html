@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="mr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quantum - Smart Preference List</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- क्यूआर कोड जनरेट करण्यासाठी ऑनलाईन लायब्ररी जोडली आहे -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <style>
+        /* डॅशबोर्ड कंट्रोल्स */
+        .controls-row {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        .search-box {
+            flex: 1;
+            min-width: 250px;
+        }
+
+        /* 🎓 स्टुडंट प्रोफाइल सेक्शन */
+        .student-info-card {
+            background: var(--grid-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        .student-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+            margin-top: 0.5rem;
+        }
+        .info-item label {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            font-weight: bold;
+            display: block;
+        }
+        .info-item span {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-main);
+        }
+
+        /* टेबल डिझाईन */
+        .master-table-container {
+            overflow-x: auto;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+        }
+        .master-table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+        .master-table th, .master-table td {
+            padding: 0.8rem 1rem;
+            border-bottom: 1px solid var(--border-color);
+            vertical-align: middle;
+        }
+        .master-table th {
+            background: #1e293b;
+            color: white;
+            font-size: 0.85rem;
+        }
+        
+        /* पीडीएफ आणि स्क्रीन दोन्हीवर दिसणारी कडक हायपरलिंक */
+        .pdf-hyperlink {
+            color: #0ea5e9 !important;
+            cursor: pointer;
+            font-weight: 600;
+            text-decoration: underline !important;
+        }
+        .pdf-hyperlink:hover {
+            color: #38bdf8 !important;
+        }
+
+        .rank-badge {
+            background: #0ea5e9;
+            color: white;
+            padding: 0.2rem 0.6rem;
+            border-radius: 4px;
+            font-weight: bold;
+            font-size: 0.85rem;
+        }
+        .action-btns { display: flex; gap: 0.3rem; }
+        .action-btns .btn { padding: 0.3rem 0.6rem; font-size: 0.75rem; }
+        .btn-del { background: #ef4444; color: white; }
+        .btn-edit { background: #f59e0b; color: white; }
+
+        /* क्यूआर कोड कंटेनर */
+        .qr-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .qr-container img {
+            border: 1px solid #cbd5e1;
+            padding: 2px;
+            background: white;
+        }
+
+        /* पॉप-अप (Modal) */
+        .modal {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); z-index: 1000;
+            justify-content: center; align-items: center; padding: 1rem;
+        }
+        .modal-content {
+            background: var(--card-bg); border: 1px solid var(--border-color);
+            width: 100%; max-width: 700px; max-height: 85vh; overflow-y: auto;
+            border-radius: 12px; padding: 1.5rem; position: relative;
+        }
+        .close-modal { position: absolute; top: 1rem; right: 1rem; font-size: 1.5rem; cursor: pointer; }
+        .info-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; margin-top: 1rem; }
+        .gate-img { width: 100%; max-height: 200px; object-fit: cover; border-radius: 8px; margin-top: 1rem; }
+
+        /* 🖨️ कडक आणि आकर्षक PDF / PRINT CSS (The Professional Smart Layout) */
+        @media print {
+            body { 
+                background: white !important; 
+                color: black !important; 
+                font-family: 'Arial', sans-serif !important;
+                padding: 10px !important;
+            }
+            
+            /* नको असलेल्या सर्व क्रिया आणि बटणे गायब करणे */
+            nav, .controls-row, .action-btns, .close-modal, #themeToggle {
+                display: none !important;
+            }
+            
+            .container, .card { 
+                max-width: 100% !important; 
+                padding: 0 !important; 
+                margin: 0 !important; 
+                background: white !important;
+                border: none !important;
+                box-shadow: none !important;
+            }
+
+            .student-info-card {
+                background: #f8fafc !important;
+                border: 2px solid #cbd5e1 !important;
+                border-radius: 6px !important;
+                margin-bottom: 20px !important;
+                padding: 15px !important;
+            }
+            .student-info-card h3 {
+                color: black !important;
+                margin-top: 0 !important;
+                border-bottom: 2px solid #000 !important;
+                padding-bottom: 5px !important;
+            }
+            .info-item label { color: #475569 !important; }
+            .info-item span { color: black !important; font-size: 1.1rem !important; }
+
+            .master-table-container { border: none !important; }
+            .master-table { 
+                width: 100% !important; 
+                border-collapse: collapse !important; 
+                margin-top: 15px !important;
+            }
+            .master-table th { 
+                background: #0f172a !important; 
+                color: white !important; 
+                border: 1px solid #0f172a !important;
+                padding: 8px !important;
+                font-weight: bold !important;
+            }
+            .master-table td { 
+                border: 1px solid #cbd5e1 !important; 
+                padding: 8px !important; 
+                color: black !important;
+                background: white !important;
+            }
+            
+            /* पीडीएफमध्ये निळ्या रंगाची कडक हायपरलिंक चालू ठेवणे जेणेकरून डिजिटल क्लिक काम करेल */
+            .pdf-hyperlink { 
+                color: #0284c7 !important; 
+                text-decoration: underline !important; 
+                font-weight: bold !important;
+            }
+            
+            .rank-badge { 
+                background: #f1f5f9 !important; 
+                color: black !important; 
+                border: 1px solid #000 !important; 
+                padding: 2px 6px !important; 
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- नेव्हिगेशन बार -->
+    <nav>
+        <div class="logo">QUANTUM</div>
+        <div class="nav-links">
+            <a href="index.html">PROFILE</a>
+            <a href="add-college.html">ADD COLLEGE</a>
+            <a href="preference-list.html" class="active">MY LIST</a>
+            <button id="themeToggle" class="btn btn-move" style="margin-left: 1rem; padding: 0.5rem;">🌓 Mode</button>
+        </div>
+    </nav>
+
+    <div class="container" style="max-width: 1200px;">
+        <div class="card">
+            
+            <h2 style="color: #0ea5e9; margin-bottom: 1.5rem; border-bottom: 2px solid var(--border-color); padding-bottom: 0.5rem;">
+                🎯 माझी पसंती यादी (My Preference Dashboard)
+            </h2>
+
+            <!-- 🎓 विद्यार्थी मूलभूत माहिती -->
+            <div class="student-info-card">
+                <h3 style="margin-bottom: 1rem; color: #0ea5e9;">📋 विद्यार्थी प्रोफाईल (Student Report Profile)</h3>
+                <div class="student-grid">
+                    <div class="info-item">
+                        <label>विद्यार्थ्याचे नाव (Student Name)</label>
+                        <span id="pName">कुंदन ...</span>
+                    </div>
+                    <div class="info-item">
+                        <label>ॲप्लिकेशन आयडी (Application ID)</label>
+                        <span id="pAppId">EN26109432</span>
+                    </div>
+                    <div class="info-item">
+                        <label>प्रवर्ग (Category)</label>
+                        <span id="pCategory">OBC / PwD</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- सर्च, फिल्टर आणि एक्सपोर्ट बटन्स -->
+            <div class="controls-row">
+                <input type="text" id="searchBar" class="search-box" placeholder="🔍 कॉलेजचे नाव किंवा जिल्हा शोधा...">
+                <select id="branchFilter" style="width: 200px; margin-bottom:0;">
+                    <option value="ALL">सर्व ब्रांचेस (All)</option>
+                    <option value="Computer Engineering">Computer Engineering</option>
+                    <option value="Information Technology">Information Technology</option>
+                    <option value="AI & Data Science">AI & Data Science</option>
+                    <option value="Electronics & Telecom">Electronics & Telecom</option>
+                </select>
+                <button onclick="window.print()" class="btn btn-primary">🖨️ Print / Save PDF</button>
+                <button onclick="exportToCSV()" class="btn btn-success">📊 Export Excel</button>
+            </div>
+
+            <!-- मुख्य स्मार्ट टेबल -->
+            <div class="master-table-container">
+                <table class="master-table" id="prefTable">
+                    <thead>
+                        <tr>
+                            <th style="width: 60px; text-align: center;">Rank</th>
+                            <th>कॉलेजचे नाव व कोड (College Name & Code)</th>
+                            <th>ब्रांच</th>
+                            <th style="text-align: center;">2025 OBC %</th>
+                            <th style="text-align: center;">2025 PwD %</th>
+                            <th style="text-align: center;">2025 Avg Package</th>
+                            <th style="text-align: center; width: 80px;">Scan QR</th>
+                            <th class="action-btns" style="text-align: center; justify-content: center;">कृती (Actions)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody">
+                        <!-- जावास्क्रिप्टद्वारे डेटा लोड होईल -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- 🔍 कॉलेज पूर्ण माहिती दाखवणारा पॉप-अप (Modal) -->
+    <div id="infoModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal()">&times;</span>
+            <h3 id="mTitle" style="color:#0ea5e9; margin-bottom: 0.2rem;"></h3>
+            <p id="mSub" style="font-size:0.85rem; color: var(--text-muted); margin-bottom: 1rem; border-bottom:1px solid var(--border-color); padding-bottom:0.5rem;"></p>
+            
+            <div class="info-grid">
+                <div><strong>प्रकार (Type):</strong> <span id="mType"></span></div>
+                <div><strong>विद्यापीठ (Affiliation):</strong> <span id="mUniv"></span></div>
+                <div><strong>जिल्हा (District):</strong> <span id="mDist"></span></div>
+                <div><strong>Admission Cell:</strong> <span id="mPhone"></span></div>
+                <div style="grid-column: span 2;"><strong>वेबसाईट:</strong> <a id="mWeb" href="#" target="_blank" style="color:#0ea5e9;">भेटी द्या</a></div>
+            </div>
+
+            <h4 style="margin-top: 1.2rem; color: #10b981;">💰 फी रचना (Fees)</h4>
+            <div class="info-grid" style="grid-template-columns: repeat(3, 1fr); background: var(--grid-bg); padding: 0.5rem; border-radius: 6px;">
+                <div>Open: <br><strong id="mFeeOpen"></strong></div>
+                <div>OBC: <br><strong id="mFeeObc"></strong></div>
+                <div>PwD: <br><strong id="mFeePwd"></strong></div>
+            </div>
+
+            <h4 style="margin-top: 1.2rem; color: #f59e0b;">📊 ३ वर्षांचा कट-ऑफ (% Percentile)</h4>
+            <table style="width:100%; border-collapse: collapse; margin-top:0.5rem; text-align:center;" class="master-table">
+                <thead>
+                    <tr style="background:#334155;"><th>Year</th><th>OBC</th><th>PwD</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>2025</td><td id="mObc25"></td><td id="mPwd25"></td></tr>
+                    <tr><td>2024</td><td id="mObc24"></td><td id="mPwd24"></td></tr>
+                    <tr><td>2023</td><td id="mObc23"></td><td id="mPwd23"></td></tr>
+                </tbody>
+            </table>
+
+            <h4 style="margin-top: 1.2rem; color: #0ea5e9;">💼 ३ वर्षांचा प्लेसमेंट (LPA)</h4>
+            <table style="width:100%; border-collapse: collapse; margin-top:0.5rem; text-align:center;" class="master-table">
+                <thead>
+                    <tr style="background:#334155;"><th>Year</th><th>Highest</th><th>Average</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>2025</td><td id="mHigh25"></td><td id="mAvg25"></td></tr>
+                    <tr><td>2024</td><td id="mHigh24"></td><td id="mAvg24"></td></tr>
+                    <tr><td>2023</td><td id="mHigh23"></td><td id="mAvg23"></td></tr>
+                </tbody>
+            </table>
+            <p style="margin-top:0.5rem; font-size:0.85rem;"><strong>प्रमुख कंपन्या:</strong> <span id="mRecruiters"></span></p>
+
+            <h4 style="margin-top: 1.2rem;">🖼️ कॉलेज मुख्य गेट</h4>
+            <img id="mGatePhoto" class="gate-img" src="" alt="Gate Photo">
+        </div>
+    </div>
+
+    <script>
+        // १. थीम व्यवस्थापन
+        if (localStorage.getItem('quantum_theme') === 'dark') document.body.classList.add('dark-mode');
+        document.getElementById('themeToggle').addEventListener('click', () => {
+            document.body.classList.toggle('dark-mode');
+            localStorage.setItem('quantum_theme', document.body.classList.contains('dark-mode') ? 'dark' : 'light');
+        });
+
+        // प्रोफाइल डेटावरून नाव लोड करणे
+        const savedProfile = JSON.parse(localStorage.getItem('quantum_profile'));
+        if(savedProfile && savedProfile.name) {
+            document.getElementById('pName').innerText = savedProfile.name;
+        }
+
+        // २. मास्टर डेटा रेंडर करणे
+        let colleges = JSON.parse(localStorage.getItem('quantum_master_colleges')) || [];
+
+        function renderTable() {
+            const tbody = document.getElementById('tableBody');
+            const searchQuery = document.getElementById('searchBar').value.toLowerCase();
+            const branchFilter = document.getElementById('branchFilter').value;
+            tbody.innerHTML = '';
+
+            if (colleges.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; color:var(--text-muted);">यादीत अजून कोणतेही कॉलेज जोडलेले नाही.</td></tr>`;
+                return;
+            }
+
+            colleges.forEach((college, index) => {
+                const matchesSearch = college.name.toLowerCase().includes(searchQuery) || college.district.toLowerCase().includes(searchQuery);
+                const matchesBranch = (branchFilter === 'ALL' || college.branch === branchFilter);
+
+                if (matchesSearch && matchesBranch) {
+                    const tr = document.createElement('tr');
+                    
+                    // क्यूआर कोडसाठी एक युनिक आयडी तयार करणे
+                    const qrId = `qr_${index}`;
+
+                    tr.innerHTML = `
+                        <td style="text-align: center;"><span class="rank-badge">#${index + 1}</span></td>
+                        <td>
+                            <!-- 🔗 ही लिंक स्क्रीनवर पॉप-अप उघडेल आणि पीडीएफ सेव्ह केल्यावर थेट त्या कॉलेजच्या अधिकृत वेबसाईटवर नेईल -->
+                            <a href="${college.website}" target="_blank" class="pdf-hyperlink" onclick="openModalFromLink(event, ${index})">${college.name}</a>
+                            <br><small style="color:var(--text-muted); font-size:0.75rem;">Code: ${college.code} | ${college.district}</small>
+                        </td>
+                        <td><small>${college.branch}</small></td>
+                        <td style="text-align: center; font-weight:bold; color:#10b981;">${college.obc25}%</td>
+                        <td style="text-align: center; font-weight:bold; color:#f59e0b;">${college.pwd25}%</td>
+                        <td style="text-align: center;">₹${college.avg25} LPA</td>
+                        <!-- क्यूआर कोड दाखवण्याचा कॉलम (प्रिंटवर एकदम कडक दिसेल) -->
+                        <td style="text-align: center;"><div id="${qrId}" class="qr-container"></div></td>
+                        <td class="action-btns" style="justify-content: center;">
+                            <button class="btn btn-move" onclick="moveRank(${index}, -1)">🔼</button>
+                            <button class="btn btn-move" onclick="moveRank(${index}, 1)">🔽</button>
+                            <button class="btn btn-edit" onclick="editRecord(${index})">✏️</button>
+                            <button class="btn btn-del" onclick="deleteRecord(${index})">🗑️</button>
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+
+                    // 📱 कॉलेजच्या वेबसाईट लिंकचा ऑटोमॅटिक क्यूआर कोड जनरेट करणे (Size 45x45 px सुटसुटीत)
+                    new QRCode(document.getElementById(qrId), {
+                        text: college.website,
+                        width: 45,
+                        height: 45,
+                        colorDark : "#000000",
+                        colorLight : "#ffffff",
+                        correctLevel : QRCode.CorrectLevel.H
+                    });
+                }
+            });
+        }
+
+        // ३. स्क्रीनवर असताना क्लिक केल्यास पॉप-अप उघडणे (वेबसाईट उघडण्याऐवजी)
+        function openModalFromLink(event, index) {
+            // जर युझर स्क्रीनवर काम करत असेल, तर आधी पॉप-अप दाखवणे, पण पीडीएफ मध्ये ही सरळ हायपरलिंक म्हणून काम करेल
+            if (window.matchMedia) {
+                const isScreen = window.matchMedia('screen').matches;
+                if(isScreen) {
+                    event.preventDefault(); // वेबसाईट डायरेक्ट ओपन होण्यापासून रोखणे
+                    openModal(index);       // पॉप-अप विंडो उघडणे
+                }
+            }
+        }
+
+        // रँक वर-खाली करणे
+        function moveRank(index, direction) {
+            let targetIndex = index + direction;
+            if (targetIndex < 0 || targetIndex >= colleges.length) return;
+            let temp = colleges[index];
+            colleges[index] = colleges[targetIndex];
+            colleges[targetIndex] = temp;
+            localStorage.setItem('quantum_master_colleges', JSON.stringify(colleges));
+            renderTable();
+        }
+
+        // डिलीट लॉजिक
+        function deleteRecord(index) {
+            if (confirm(`तुम्हाला खरोखर "${colleges[index].name}" काढायचे आहे का?`)) {
+                colleges.splice(index, 1);
+                localStorage.setItem('quantum_master_colleges', JSON.stringify(colleges));
+                renderTable();
+            }
+        }
+
+        function editRecord(index) {
+            alert("डेटा बदलण्यासाठी 'ADD COLLEGE' मध्ये नवीन एंट्री करा व जुनी डिलीट करा.");
+        }
+
+        // पॉप-अप उघडणे
+        function openModal(index) {
+            const data = colleges[index];
+            document.getElementById('mTitle').innerText = data.name;
+            document.getElementById('mSub').innerText = `Choice Code: ${data.code} | Branch: ${data.branch}`;
+            document.getElementById('mType').innerText = data.type;
+            document.getElementById('mUniv').innerText = data.university;
+            document.getElementById('mDist').innerText = data.district;
+            document.getElementById('mPhone').innerText = data.phone;
+            document.getElementById('mWeb').href = data.website;
+            
+            document.getElementById('mFeeOpen').innerText = `₹${parseInt(data.feesOpen).toLocaleString('en-IN')}`;
+            document.getElementById('mFeeObc').innerText = `₹${parseInt(data.feesObc).toLocaleString('en-IN')}`;
+            document.getElementById('mFeePwd').innerText = `₹${parseInt(data.feesPwd).toLocaleString('en-IN')}`;
+
+            document.getElementById('mObc25').innerText = `${data.obc25}%`;
+            document.getElementById('mPwd25').innerText = `${data.pwd25}%`;
+            document.getElementById('mObc24').innerText = `${data.obc24}%`;
+            document.getElementById('mPwd24').innerText = `${data.pwd24}%`;
+            document.getElementById('mObc23').innerText = `${data.obc23}%`;
+            document.getElementById('mPwd23').innerText = `${data.pwd23}%`;
+
+            document.getElementById('mHigh25').innerText = `₹${data.high25} LPA`;
+            document.getElementById('mAvg25').innerText = `₹${data.avg25} LPA`;
+            document.getElementById('mHigh24').innerText = `₹${data.high24} LPA`;
+            document.getElementById('mAvg24').innerText = `₹${data.avg24} LPA`;
+            document.getElementById('mHigh23').innerText = `₹${data.high23} LPA`;
+            document.getElementById('mAvg23').innerText = `₹${data.avg23} LPA`;
+
+            document.getElementById('mRecruiters').innerText = data.recruiters;
+            document.getElementById('mGatePhoto').src = data.gatePhoto;
+
+            document.getElementById('infoModal').style.display = 'flex';
+        }
+
+        function closeModal() { document.getElementById('infoModal').style.display = 'none'; }
+
+        // एक्सेल डाउनलोड
+        function exportToCSV() {
+            if(colleges.length === 0) return alert("डाउनलोड करण्यासाठी डेटा नाही!");
+            let csvContent = "data:text/csv;charset=utf-8,";
+            csvContent += "Rank,College Name,DTE Choice Code,Branch,2025 OBC Cutoff,2025 PwD Cutoff,2025 Avg Package(LPA),Link\n";
+            colleges.forEach((c, index) => {
+                let nameClean = c.name.replace(/,/g, " "); 
+                csvContent += `${index + 1},${nameClean},${c.code},${c.branch},${c.obc25}%,${c.pwd25}%,${c.avg25} LPA,${c.website}\n`;
+            });
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", "Smart_College_List.csv");
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        document.getElementById('searchBar').addEventListener('input', renderTable);
+        document.getElementById('branchFilter').addEventListener('change', renderTable);
+        window.onload = renderTable;
+    </script>
+</body>
+</html>

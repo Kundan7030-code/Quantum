@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="mr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quantum - Premium Profile Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- PDF जनरेशनसाठी html2pdf लायब्ररी -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <style>
+        /* प्रीमियम लेआउट आणि पेज-ब्रेक फिक्स */
+        .profile-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 3px solid #0ea5e9;
+            padding-bottom: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        .user-meta h1 {
+            font-size: 2.2rem;
+            letter-spacing: -0.5px;
+            text-transform: uppercase;
+        }
+        .info-card-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.2rem;
+        }
+        @media (max-width: 768px) {
+            .info-card-grid { grid-template-columns: 1fr; }
+            .profile-header { flex-direction: column; align-items: flex-start; gap: 1.5rem; }
+        }
+        .data-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.55rem 0;
+            border-bottom: 1px dashed var(--border-color);
+        }
+        .data-row:last-child { border-bottom: none; }
+        .data-label {
+            font-weight: 600;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+        .data-value {
+            font-weight: 700;
+            color: var(--text-main);
+            text-align: right;
+        }
+        
+        /* 🛑 क्रिटिकल फिक्स: हे कार्ड्सना PDF मध्ये मधोमध कापण्यापासून रोखते */
+        .sub-card {
+            background: var(--grid-bg);
+            border-radius: 8px;
+            padding: 1.25rem;
+            border: 1px solid var(--border-color);
+            page-break-inside: avoid; /* जुन्या ब्राउझरसाठी */
+            break-inside: avoid;      /* मॉडर्न PDF इंजिनसाठी */
+        }
+        
+        .action-bar {
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        /* फाईल डाउनलोड करताना लेआउट सुंदर दिसण्यासाठी पॅडिंग */
+        #profileDocument {
+            padding: 2rem;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- नेव्हिगेशन बार -->
+    <nav>
+        <div class="logo">QUANTUM</div>
+        <div class="nav-links">
+            <a href="index.html" class="active">PROFILE</a>
+            <a href="add-college.html">ADD COLLEGE</a>
+            <a href="preference-list.html">MY LIST</a>
+            <button id="themeToggle" class="btn btn-move" style="margin-left: 1rem; padding: 0.5rem;">🌓 Mode</button>
+        </div>
+    </nav>
+
+    <div class="container">
+        
+        <!-- ॲक्शन बार (बटन्स) -->
+        <div class="action-bar">
+            <button onclick="downloadProfilePDF()" class="btn btn-success">📥 Download PDF</button>
+        </div>
+
+        <!-- मुख्य प्रोफाईल एरिया (हा भाग PDF मध्ये जाईल) -->
+        <div class="card" id="profileDocument">
+            
+            <!-- मुख्य हेडर: नाव आणि फोटो -->
+            <div class="profile-header">
+                <div class="user-meta">
+                    <h1 style="color: #0ea5e9; margin-bottom: 0.4rem;">KUNDAN RAJU WADEKAR</h1>
+                    <p style="font-size: 1.1rem; font-weight: 600; color: var(--text-muted);">
+                        OBC Category | PwD (Low Vision)
+                    </p>
+                </div>
+                
+                <!-- फोटो आणि सही डिस्प्ले -->
+                <div style="display: flex; gap: 15px; align-items: center;">
+                    <!-- प्रोफाईल फोटो (photo.jpg) -->
+                    <div style="width: 105px; height: 130px; border: 2px solid #0ea5e9; border-radius: 6px; overflow: hidden; background: #f8fafc; box-shadow: 0 4px 10px rgba(0,0,0,0.08);">
+                        <img src="photo.jpg" alt="Kundan Photo" style="width: 100%; height: 100%; object-fit: cover;">
+                    </div>
+                    <!-- सही (signature.jpg) -->
+                    <div style="width: 130px; height: 45px; border: 1px solid #cbd5e1; border-radius: 4px; overflow: hidden; background: #ffffff; align-self: flex-end; margin-bottom: 5px; box-shadow: 0 2px 6px rgba(0,0,0,0.05);">
+                        <img src="signature.jpg" alt="Kundan Signature" style="width: 100%; height: 100%; object-fit: contain;">
+                    </div>
+                </div>
+            </div>
+
+            <!-- २ कॉलम प्रिमियम ग्रीड लेआउट -->
+            <div class="info-card-grid">
+                
+                <!-- विभाग A: वैयक्तिक माहिती -->
+                <div class="sub-card">
+                    <h3 class="section-title" style="margin-top:0;">A. वैयक्तिक माहिती (Personal Details)</h3>
+                    <div class="data-row"><div class="data-label">Father's Name</div><div class="data-value">RAJU MANGALMURTI WADEKAR</div></div>
+                    <div class="data-row"><div class="data-label">Mother's Name</div><div class="data-value">ARCHANA RAJU WADEKAR</div></div>
+                    <div class="data-row"><div class="data-label">Date of Birth</div><div class="data-value">10/05/2009</div></div>
+                    <div class="data-row"><div class="data-label">Gender / Blood Grp</div><div class="data-value">MALE / B NEGATIVE</div></div>
+                    <div class="data-row"><div class="data-label">Religion / Caste</div><div class="data-value">HINDU / SONAR (ZADE)</div></div>
+                    <div class="data-row"><div class="data-label">Aadhaar Number</div><div class="data-value">[Aadhaar Redacted]</div></div>
+                </div>
+
+                <!-- विभाग B: संपर्क तपशील -->
+                <div class="sub-card">
+                    <h3 class="section-title" style="margin-top:0;">B. संपर्क तपशील (Contact Details)</h3>
+                    <div class="data-row"><div class="data-label">Mobile Number</div><div class="data-value">+91 70303 37206</div></div>
+                    <div class="data-row"><div class="data-label">Alternate Mobile</div><div class="data-value">+91 83906 78894</div></div>
+                    <div class="data-row"><div class="data-label">Email Address</div><div class="data-value" style="font-size:0.85rem;">kundanwadekar122@gmail.com</div></div>
+                    <div class="data-row"><div class="data-label">District / Taluka</div><div class="data-value">BHANDARA / BHANDARA</div></div>
+                    <div class="data-row" style="flex-direction: column; align-items: flex-start; border: none;">
+                        <div class="data-label" style="margin-bottom: 4px;">Full Address</div>
+                        <div class="data-value" style="text-align: left; font-size: 0.85rem;">GAJANAN NAGAR, NEAR TULJA BHAWANI MANDIR, BEHIND ROYAL PALACE CITY, KHAT ROAD, KHOKARLA - 441906</div>
+                    </div>
+                </div>
+
+                <!-- विभाग C: शैक्षणिक पात्रता -->
+                <div class="sub-card">
+                    <h3 class="section-title" style="margin-top:0;">C. शैक्षणिक पात्रता (Academic Details)</h3>
+                    <div style="margin-bottom: 0.8rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--border-color);">
+                        <span style="font-weight: bold; color: var(--primary); font-size: 0.9rem;">📊 SSC (10th) - 2024</span>
+                        <div class="data-row"><div class="data-label">Board / Seat No</div><div class="data-value">MSBSHSE / J000597</div></div>
+                        <div class="data-row"><div class="data-label">Marks / Percentage</div><div class="data-value">395 / 500 | <span style="color:var(--success)">79.00%</span></div></div>
+                    </div>
+                    <div>
+                        <span style="font-weight: bold; color: var(--primary); font-size: 0.9rem;">🔬 HSC (12th) - 2026</span>
+                        <div class="data-row"><div class="data-label">Board / Seat No</div><div class="data-value">MSBSHSE / N009094</div></div>
+                        <div class="data-row"><div class="data-label">PCM Marks / \%</div><div class="data-value">146 / 300 | <span style="color:var(--success)">56.00%</span></div></div>
+                    </div>
+                </div>
+
+                <!-- विभाग E: आरक्षित प्रवर्ग व प्रमाणपत्रे -->
+                <div class="sub-card">
+                    <h3 class="section-title" style="margin-top:0;">E. प्रमाणपत्र पडताळणी (Certificates)</h3>
+                    <div class="data-row"><div class="data-label">Category Certificate</div><div class="data-value"><span class="status-badge status-yes">OBC AVAILABLE</span></div></div>
+                    <div class="data-row"><div class="data-label">Caste Validity</div><div class="data-value"><span class="status-badge status-yes">AVAILABLE</span></div></div>
+                    <div class="data-row"><div class="data-label">Non Creamy Layer</div><div class="data-value"><span class="status-badge status-yes">AVAILABLE</span></div></div>
+                    <div class="data-row"><div class="data-label">PwD Certificate</div><div class="data-value"><span class="status-badge status-yes">YES (LOW VISION)</span></div></div>
+                    <div class="data-row"><div class="data-label">Domicile & Nationality</div><div class="data-value"><span class="status-badge status-yes">AVAILABLE</span></div></div>
+                </div>
+
+                <!-- विभाग G: पालकांची माहिती -->
+                <div class="sub-card" style="grid-column: span 2;">
+                    <h3 class="section-title" style="margin-top:0;">G. पालकांची माहिती व उत्पन्नाचा दाखला (Parent Details)</h3>
+                    <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+                        <div>
+                            <div class="data-row"><div class="data-label">Father's Occupation</div><div class="data-value">LABOUR</div></div>
+                            <div class="data-row"><div class="data-label">Mother's Occupation</div><div class="data-value">HOUSEWIFE</div></div>
+                        </div>
+                        <div>
+                            <div class="data-row"><div class="data-label">Annual Family Income</div><div class="data-value" style="color:var(--success)">₹ 42,000 /-</div></div>
+                            <div class="data-row"><div class="data-label">Parent Contact No.</div><div class="data-value">8390678894</div></div>
+                        </div>
+                    </div>
+                </div>
+
+            </div> <!-- ग्रीड समाप्ती -->
+
+            <!-- प्रवेश परीक्षा आणि कॅप माहिती (तळटीप म्हणून) -->
+            <div class="strategy-box" style="margin-top: 1.2rem; margin-bottom: 0;">
+                <h4 style="color:#b45309; margin-bottom:0.2rem;">⏳ MHT-CET & CAP Process Status</h4>
+                <p style="font-size: 0.9rem;">प्रवेश परीक्षेचा निकाल (MHT-CET Percentile) आणि CAP गुणवत्ता क्रमांक (Merit Number) अद्याप घोषित झालेले नाहीत. माहिती उपलब्ध होताच येथे अद्ययावत केली जाईल.</p>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        // १. थीम स्विचर फंक्शनॅलिटी
+        const themeToggle = document.getElementById('themeToggle');
+        themeToggle.addEventListener('click', () => {
+            document.body.classList.toggle('dark-mode');
+            const isDark = document.body.classList.contains('dark-mode');
+            localStorage.setItem('quantum_theme', isDark ? 'dark' : 'light');
+        });
+
+        if (localStorage.getItem('quantum_theme') === 'dark') {
+            document.body.classList.add('dark-mode');
+        }
+
+        // २. नवीन फिक्स केलेले PDF डाऊनलोड फंक्शन
+        function downloadProfilePDF() {
+            const element = document.getElementById('profileDocument');
+            
+            const opt = {
+                margin:       [12, 12, 12, 12], // पानाला योग्य मार्जिन राखण्यासाठी
+                filename:     'Kundan_Wadekar_Profile.pdf',
+                image:        { type: 'jpeg', quality: 0.98 },
+                html2canvas:  { scale: 2, useCORS: true },
+                jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' },
+                // 🛑 हे पेजच्या मधोमध टेक्स्ट कट होण्यापासून रोखते
+                pagebreak:    { mode: ['avoid-all', 'css'] } 
+            };
+
+            html2pdf().set(opt).from(element).save();
+        }
+    </script>
+</body>
+</html>
