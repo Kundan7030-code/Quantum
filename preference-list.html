@@ -384,30 +384,34 @@
                     const tr = document.createElement('tr');
                     const qrId = `qr_${index}`;
 
-                    tr.innerHTML = `
-                        <td style="text-align: center;"><span class="rank-badge">#${displayIndex + 1}</span></td>
-                        <td>
-                            <a href="javascript:void(0)" class="pdf-hyperlink" onclick="openModal('${college.id}')">${college.name}</a>
-                            <br><small style="color:gray; font-size:0.75rem;">Code: ${college.code} | ${college.district}</small>
-                        </td>
-                        <td><small>${college.branch}</small></td>
-                        <td style="text-align: center; font-weight:bold; color:#10b981;">${college.obc25}%</td>
-                        <td style="text-align: center; font-weight:bold; color:#f59e0b;">${college.pwd25}%</td>
-                        <td style="text-align: center;">₹${college.avg25} LPA</td>
-                        <td style="text-align: center;"><div id="${qrId}" class="qr-container"></div></td>
-                        
-                      <!-- 🔼 🔽 Ordering Column (नवीन सुटसुटीत Grey Outline लुक) -->
-<td style="text-align: center; white-space: nowrap;">
-    <button class="btn" style="background: transparent; color: #64748b; border: 1px solid #cbd5e1; padding: 4px 8px; border-radius: 4px; font-weight: bold; margin-right: 2px; cursor: pointer;" onclick="moveOrder(${index}, -1)">▲</button>
-    <button class="btn" style="background: transparent; color: #64748b; border: 1px solid #cbd5e1; padding: 4px 8px; border-radius: 4px; font-weight: bold; cursor: pointer;" onclick="moveOrder(${index}, 1)">▼</button>
-</td>
+                  tr.innerHTML = `
+    <td style="text-align: center;"><span class="rank-badge">#${displayIndex + 1}</span></td>
+    <td>
+        <a href="javascript:void(0)" class="pdf-hyperlink" onclick="openModal('${college.id}')">${college.name}</a>
+        <br><small style="color:gray; font-size:0.75rem;">Code: ${college.code} | ${college.district}</small>
+    </td>
+    <td><small>${college.branch}</small></td>
+    <td style="text-align: center; font-weight:bold; color:#10b981;">${college.obc25}%</td>
+    <td style="text-align: center; font-weight:bold; color:#f59e0b;">${college.pwd25}%</td>
+    <td style="text-align: center;">₹${college.avg25} LPA</td>
+    
+    <!-- 🔼 🔽 Ordering Column (नवीन सुटसुटीत Grey Outline लुक) -->
+    <td style="text-align: center; white-space: nowrap;">
+        <button class="btn" style="background: transparent; color: #64748b; border: 1px solid #cbd5e1; padding: 4px 8px; border-radius: 4px; font-weight: bold; margin-right: 2px; cursor: pointer;" onclick="moveOrder(${index}, -1)">▲</button>
+        <button class="btn" style="background: transparent; color: #64748b; border: 1px solid #cbd5e1; padding: 4px 8px; border-radius: 4px; font-weight: bold; cursor: pointer;" onclick="moveOrder(${index}, 1)">▼</button>
+    </td>
 
-                   <!-- ✏️ 🗑️ Actions Column (नवीन Outline लुक) -->
-<td class="action-btns" style="justify-content: center; gap: 8px;">
-    <button class="btn" style="background: transparent; color: #eab308; border: 1px solid #eab308; padding: 4px 8px; border-radius: 4px; font-weight: bold;" onclick="editRecord('${college.id}')">⚙️ Edit</button>
-    <button class="btn" style="background: transparent; color: #ef4444; border: 1px solid #ef4444; padding: 4px 8px; border-radius: 4px; font-weight: bold;" onclick="deleteRecord('${college.id}')">🗑️ Delete</button>
-</td>
- `;
+    <!-- ⚙️ 🗑️ Actions Column (मॅचिंग Outline लुक) -->
+    <td class="action-btns" style="justify-content: center; gap: 6px;">
+        <button class="btn" style="background: transparent; color: #eab308; border: 1px solid #eab308; padding: 4px 8px; border-radius: 4px; font-weight: bold; cursor: pointer;" onclick="editRecord('${college.id}')">⚙️ Edit</button>
+        <button class="btn" style="background: transparent; color: #ef4444; border: 1px solid #ef4444; padding: 4px 8px; border-radius: 4px; font-weight: bold; cursor: pointer;" onclick="deleteRecord('${college.id}')">🗑️ Delete</button>
+    </td>
+`;
+tbody.appendChild(tr);
+
+// QR Code जनरेट करणारा जुना कोड (new QRCode...) आपण इथे काढून टाकला आहे.
+displayIndex++;
+
                     tbody.appendChild(tr);
 
                     new QRCode(document.getElementById(qrId), {
