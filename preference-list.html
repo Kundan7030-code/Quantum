@@ -231,7 +231,7 @@
                     </div>
                     <div class="info-item">
                         <label>प्रवर्ग (Category)</label>
-                        <span id="pCategory">OBC / PwD</span>
+                        <span id="pCategory">OBC | PwD</span>
                     </div>
                 </div>
             </div>
@@ -469,6 +469,29 @@
     }
 
     window.onload = renderTable;
+
+    function exportToCSV() {
+    database.ref('colleges').once('value').then((snapshot) => {
+        const data = snapshot.val();
+        if (!data) return alert("डेटा उपलब्ध नाही!");
+        
+        let csv = 'College Name,Branch,OBC%,PWD%,Avg Package\n';
+        Object.values(data).forEach(c => {
+            csv += `"${c.name}","${c.branch}",${c.obc25},${c.pwd25},${c.avg25}\n`;
+        });
+        
+        const blob = new Blob([csv], { type: 'text/csv' });
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.setAttribute('hidden', '');
+        a.setAttribute('href', url);
+        a.setAttribute('download', 'Preference_List.csv');
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+    });
+    }
+    
 </script>
 </body>
 </html>
