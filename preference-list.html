@@ -91,7 +91,7 @@
             font-size: 0.85rem;
         }
         .action-btns { display: flex; gap: 0.3rem; }
-        .action-btns .btn { padding: 0.3rem 0.6rem; font-size: 0.75rem; }
+        .action-btns .btn { padding: 0.3rem 0.6rem; font-size: 0.75rem; border: none; border-radius: 4px; cursor: pointer; }
         .btn-del { background: #ef4444; color: white; }
         .btn-edit { background: #f59e0b; color: white; }
 
@@ -122,7 +122,7 @@
         .info-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; margin-top: 1rem; }
         .gate-img { width: 100%; max-height: 200px; object-fit: cover; border-radius: 8px; margin-top: 1rem; }
 
-        /* 🖨️ कडक आणि आकर्षक PDF / PRINT CSS (The Professional Smart Layout) */
+        /* 🖨️ कडक आणि आकर्षक PDF / PRINT CSS */
         @media print {
             body { 
                 background: white !important; 
@@ -131,8 +131,7 @@
                 padding: 10px !important;
             }
             
-            /* नको असलेल्या सर्व क्रिया आणि बटणे गायब करणे */
-            nav, .controls-row, .action-btns, .close-modal, #themeToggle {
+            nav, .controls-row, .action-btns, .close-modal, #themeToggle, td:nth-child(8) {
                 display: none !important;
             }
             
@@ -181,7 +180,6 @@
                 background: white !important;
             }
             
-            /* पीडीएफमध्ये निळ्या रंगाची कडक हायपरलिंक चालू ठेवणे जेणेकरून डिजिटल क्लिक काम करेल */
             .pdf-hyperlink { 
                 color: #0284c7 !important; 
                 text-decoration: underline !important; 
@@ -227,7 +225,7 @@
                     </div>
                     <div class="info-item">
                         <label>ॲप्लिकेशन आयडी (Application ID)</label>
-                        <span id="pAppId">Commimg Soon</span>
+                        <span id="pAppId">Coming Soon</span>
                     </div>
                     <div class="info-item">
                         <label>प्रवर्ग (Category)</label>
@@ -262,7 +260,8 @@
                             <th style="text-align: center;">2025 PwD %</th>
                             <th style="text-align: center;">2025 Avg Package</th>
                             <th style="text-align: center; width: 80px;">Scan QR</th>
-                            <th class="action-btns" style="text-align: center; justify-content: center;">कृती (Actions)</th>
+                            <th style="text-align: center; width: 100px;">क्रम (Order)</th>
+                            <th style="text-align: center; width: 120px;">कृती (Actions)</th>
                         </tr>
                     </thead>
                     <tbody id="tableBody">
@@ -325,7 +324,7 @@
         </div>
     </div>
 
- <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
 
 <script>
@@ -344,7 +343,6 @@
     firebase.initializeApp(firebaseConfig);
     const database = firebase.database();
 
-    // ग्लोबल लिस्ट जेणेकरून आपल्याला ऑर्डर बदलताना वापरता येईल
     let currentCollegeList = [];
 
     // २. थीम मॅनेजमेंट
@@ -354,13 +352,12 @@
         localStorage.setItem('quantum_theme', document.body.classList.contains('dark-mode') ? 'dark' : 'light');
     });
 
-    // ३. मुख्य फंक्शन: डेटा टेबलमध्ये दाखवणे (क्रमवारीसह)
+    // ३. मुख्य फंक्शन: डेटा टेबलमध्ये दाखवणे
     function renderTable() {
         const tbody = document.getElementById('tableBody');
         const searchQuery = document.getElementById('searchBar').value.toLowerCase();
         const branchFilter = document.getElementById('branchFilter').value;
 
-        // .orderByChild('order') मुळे कॉलेजेस योग्य क्रमानेच येतील
         database.ref('colleges').orderByChild('order').on('value', (snapshot) => {
             const data = snapshot.val();
             tbody.innerHTML = '';
@@ -370,7 +367,6 @@
                 return;
             }
 
-            // आधीची लिस्ट रिकामी करून नवीन डेटा भरणे
             currentCollegeList = [];
             snapshot.forEach((childSnapshot) => {
                 currentCollegeList.push({
@@ -400,13 +396,15 @@
                         <td style="text-align: center;">₹${college.avg25} LPA</td>
                         <td style="text-align: center;"><div id="${qrId}" class="qr-container"></div></td>
                         
-                        <!-- रेकॉर्ड वर किंवा खाली करण्याचे बट्स जोडले -->
+                        <!-- 🔼 🔽 Ordering Column -->
                         <td style="text-align: center; white-space: nowrap;">
-                            <button class="btn" style="padding:2px 6px; margin-right:2px; background:#3b82f6;" onclick="moveOrder(${index}, -1)">🔼</button>
-                            <button class="btn" style="padding:2px 6px; background:#3b82f6;" onclick="moveOrder(${index}, 1)">🔽</button>
+                            <button class="btn" style="padding:4px 8px; margin-right:2px; background:#3b82f6; color:white;" onclick="moveOrder(${index}, -1)">🔼</button>
+                            <button class="btn" style="padding:4px 8px; background:#3b82f6; color:white;" onclick="moveOrder(${index}, 1)">🔽</button>
                         </td>
 
+                        <!-- ✏️ 🗑️ Actions Column -->
                         <td class="action-btns" style="justify-content: center;">
+                            <button class="btn btn-edit" onclick="editRecord('${college.id}')">✏️</button>
                             <button class="btn btn-del" onclick="deleteRecord('${college.id}')">🗑️</button>
                         </td>
                     `;
@@ -423,35 +421,38 @@
         });
     }
 
-    // ४. कॉलेजचा क्रम वर-खाली (Ordering) करणारे नवीन फंक्शन
-    function moveOrder(index, direction) {
-        let targetIndex = index + direction;
-        
-        // जर पहिल्या कॉलेजला अजून वर किंवा शेवटच्या कॉलेजला अजून खाली करायचा प्रयत्न केला तर थांबवणे
-        if (targetIndex < 0 || targetIndex >= currentCollegeList.length) return;
+   // ५. रेकॉर्ड एडिट (Edit) करण्याचे नवीन सिस्टीम
+    function editRecord(id) {
+        database.ref('colleges/' + id).once('value').then((snapshot) => {
+            const college = snapshot.val();
+            if (!college) return;
 
-        let currentCollege = currentCollegeList[index];
-        let targetCollege = currentCollegeList[targetIndex];
+            const newName = prompt("कॉलेजचे नवीन नाव टाका:", college.name);
+            if (newName === null) return; 
 
-        // दोन्ही कॉलेजेसचे 'order' आयडी आपापसात बदलणे (Swap)
-        let currentOrder = currentCollege.order || index;
-        let targetOrder = targetCollege.order || targetIndex;
+            const newObc25 = prompt("OBC 2025 चा नवीन कट-ऑफ (%) टाका:", college.obc25);
+            if (newObc25 === null) return;
 
-        // जर दोघांची ऑर्डर सारखीच असेल तर नवीन ऑर्डर सेट करणे
-        if(currentOrder === targetOrder) {
-            currentOrder = index;
-            targetOrder = targetIndex;
-        }
+            const newPwd25 = prompt("PwD 2025 चा नवीन कट-ऑफ (%) टाका:", college.pwd25);
+            if (newPwd25 === null) return;
 
-        const updates = {};
-        updates[`/colleges/${currentCollege.id}/order`] = targetOrder;
-        updates[`/colleges/${targetCollege.id}/order`] = currentOrder;
+            const newAvg25 = prompt("नवीन ॲव्हरेज पॅकेज (LPA) टाका:", college.avg25);
+            if (newAvg25 === null) return;
 
-        // Firebase मध्ये एकाच वेळी दोन्ही अपडेट करणे
-        database.ref().update(updates);
+            database.ref('colleges/' + id).update({
+                name: newName,
+                obc25: newObc25,
+                pwd25: newPwd25,
+                avg25: newAvg25
+            }).then(() => {
+                alert("माहिती यशस्वीरित्या बदलली आहे! 🚀");
+            }).catch((error) => {
+                alert("एरर आली: " + error.message);
+            });
+        });
     }
 
-    // ५. मोडल (Modal) फंक्शन
+    // ६. मोडल (Modal) ओपन आणि क्लोज करणे
     function openModal(id) {
         database.ref('colleges/' + id).once('value').then((snapshot) => {
             const c = snapshot.val();
@@ -459,22 +460,33 @@
 
             document.getElementById('mTitle').innerText = c.name;
             document.getElementById('mSub').innerText = `${c.branch} | Code: ${c.code}`;
-            document.getElementById('mType').innerText = c.type;
-            document.getElementById('mUniv').innerText = c.university;
-            document.getElementById('mDist').innerText = c.district;
-            document.getElementById('mPhone').innerText = c.phone;
-            document.getElementById('mWeb').href = c.website;
+            document.getElementById('mType').innerText = c.type || "माहिती नाही";
+            document.getElementById('mUniv').innerText = c.university || "माहिती नाही";
+            document.getElementById('mDist').innerText = c.district || "माहिती नाही";
+            document.getElementById('mPhone').innerText = c.phone || "माहिती नाही";
+            document.getElementById('mWeb').href = c.website || "#";
             
             document.getElementById('mFeeOpen').innerText = "₹ " + (c.feesOpen || 0);
             document.getElementById('mFeeObc').innerText = "₹ " + (c.feesObc || 0);
             document.getElementById('mFeePwd').innerText = "₹ " + (c.feesPwd || 0);
             
-            document.getElementById('mObc25').innerText = c.obc25 + "%";
-            document.getElementById('mPwd25').innerText = c.pwd25 + "%";
-            document.getElementById('mHigh25').innerText = c.high25 + " LPA";
-            document.getElementById('mAvg25').innerText = c.avg25 + " LPA";
+            document.getElementById('mObc25').innerText = (c.obc25 || 0) + "%";
+            document.getElementById('mPwd25').innerText = (c.pwd25 || 0) + "%";
+            document.getElementById('mObc24').innerText = (c.obc24 || 0) + "%";
+            document.getElementById('mPwd24').innerText = (c.pwd24 || 0) + "%";
+            document.getElementById('mObc23').innerText = (c.obc23 || 0) + "%";
+            document.getElementById('mPwd23').innerText = (c.pwd23 || 0) + "%";
 
+            document.getElementById('mHigh25').innerText = (c.high25 || 0) + " LPA";
+            document.getElementById('mAvg25').innerText = (c.avg25 || 0) + " LPA";
+            document.getElementById('mHigh24').innerText = (c.high24 || 0) + " LPA";
+            document.getElementById('mAvg24').innerText = (c.avg24 || 0) + " LPA";
+            document.getElementById('mHigh23').innerText = (c.high23 || 0) + " LPA";
+            document.getElementById('mAvg23').innerText = (c.avg23 || 0) + " LPA";
+
+            document.getElementById('mRecruiters').innerText = c.recruiters || "माहिती नाही";
             document.getElementById('mGatePhoto').src = c.gatePhoto || "";
+
             document.getElementById('infoModal').style.display = 'flex';
         });
     }
@@ -483,11 +495,39 @@
         document.getElementById('infoModal').style.display = 'none';
     }
 
-    // ६. रेकॉर्ड डिलीट करणे
+    // ७. रेकॉर्ड डिलीट करणे
     function deleteRecord(id) {
         if (confirm("हे कॉलेज यादीतून कायमचे काढायचे का?")) {
             database.ref('colleges/' + id).remove();
         }
+    }
+
+    // ८. Excel/CSV मध्ये डेटा एक्सपोर्ट करणे
+    function exportToCSV() {
+        database.ref('colleges').orderByChild('order').once('value').then((snapshot) => {
+            const data = snapshot.val();
+            if (!data) return alert("डेटा उपलब्ध नाही!");
+            
+            let csv = '\uFEFF'; // UTF-8 BOM मराठी फॉन्टसाठी
+            csv += 'Rank,College Name,Code,Branch,District,2025 OBC %,2025 PwD %,2025 Avg Package (LPA)\n';
+            
+            let index = 1;
+            snapshot.forEach((childSnapshot) => {
+                const c = childSnapshot.val();
+                csv += `${index},"${c.name}",${c.code},"${c.branch}","${c.district}",${c.obc25},${c.pwd25},${c.avg25}\n`;
+                index++;
+            });
+            
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.setAttribute('hidden', '');
+            a.setAttribute('href', url);
+            a.setAttribute('download', 'Quantum_Preference_List.csv');
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        });
     }
 
     // इव्हेंट्स आणि इनिशियलायझेशन
