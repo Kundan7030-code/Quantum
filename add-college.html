@@ -276,134 +276,97 @@
             </form>
         </div>
     </div>
-<script>
-    // १. थीम स्विचर लॉजिक
-    const themeToggle = document.getElementById('themeToggle');
-    themeToggle.addEventListener('click', () => {
-        document.body.classList.toggle('dark-mode');
-        const isDark = document.body.classList.contains('dark-mode');
-        localStorage.setItem('quantum_theme', isDark ? 'dark' : 'light');
-    });
-    if (localStorage.getItem('quantum_theme') === 'dark') document.body.classList.add('dark-mode');
+<script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
 
-    // २. फॉर्म डेटा लोकल स्टोरेजमध्ये सबमिट करणे
+<script>
+    // १. तुझा Firebase कॉन्फिगरेशन
+    const firebaseConfig = {
+        apiKey: "AIzaSyAkyNmrfDZnMdPmNrykdu5es8MKmKmTd7E",
+        authDomain: "quantum-1926e.firebaseapp.com",
+        projectId: "quantum-1926e",
+        storageBucket: "quantum-1926e.firebasestorage.app",
+        messagingSenderId: "246109732676",
+        appId: "1:246109732676:web:4fbbb984ef07a78abe2111",
+        databaseURL: "https://quantum-1926e-default-rtdb.firebaseio.com/" // हे तुझ्या कन्सोलमध्ये बघून एकदा चेक कर
+    };
+
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    const database = firebase.database();
+
+    // थीम स्विचर
+    if (localStorage.getItem('quantum_theme') === 'dark') document.body.classList.add('dark-mode');
+    document.getElementById('themeToggle').addEventListener('click', () => {
+        document.body.classList.toggle('dark-mode');
+        localStorage.setItem('quantum_theme', document.body.classList.contains('dark-mode') ? 'dark' : 'light');
+    });
+
+    // २. फॉर्म सबमिट लॉजिक
     const form = document.getElementById('masterCollegeForm');
     const alertBox = document.getElementById('successAlert');
 
-   form.addEventListener('submit', function(e) {
-    e.preventDefault();
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
 
-    const fileInput = document.getElementById('gatePhoto');
-    const file = fileInput.files[0];
-    const reader = new FileReader();
+        // इमेज वाचणे
+        const fileInput = document.getElementById('gatePhoto');
+        const file = fileInput.files[0];
+        const reader = new FileReader();
 
-    // जेव्हा फाईल वाचून पूर्ण होईल, तेव्हा डेटा सेव्ह करा
-    reader.onloadend = function() {
-        const base64Image = reader.result; // फोटोचा लांबलचक कोड तयार झाला
+        reader.onloadend = function() {
+            const base64Image = reader.result;
 
-        const collegeRecord = {
-            name: document.getElementById('collegeName').value,
-            code: document.getElementById('collegeCode').value,
-            type: document.getElementById('collegeType').value,
-            university: document.getElementById('university').value,
-            branch: document.getElementById('branch').value,
-            district: document.getElementById('district').value,
-            website: document.getElementById('website').value,
-            phone: document.getElementById('phone').value,
-            feesOpen: document.getElementById('feesOpen').value,
-            feesObc: document.getElementById('feesObc').value,
-            feesPwd: document.getElementById('feesPwd').value,
-            obc25: document.getElementById('coObc25').value,
-            pwd25: document.getElementById('coPwd25').value || '-',
-            obc24: document.getElementById('coObc24').value,
-            pwd24: document.getElementById('coPwd24').value || '-',
-            obc23: document.getElementById('coObc23').value,
-            pwd23: document.getElementById('coPwd23').value || '-',
-            high25: document.getElementById('pHigh25').value,
-            avg25: document.getElementById('pAvg25').value,
-            ratio25: document.getElementById('ratio25').value || '-',
-            high24: document.getElementById('pHigh24').value,
-            avg24: document.getElementById('pAvg24').value,
-            ratio24: document.getElementById('ratio24').value || '-',
-            high23: document.getElementById('pHigh23').value,
-            avg23: document.getElementById('pAvg23').value,
-            ratio23: document.getElementById('ratio23').value || '-',
-            recruiters: document.getElementById('recruiters').value,
-            // 📸 इथे फोटो सेव्ह होत आहे
-            gatePhoto: base64Image 
+            const collegeRecord = {
+                name: document.getElementById('collegeName').value,
+                code: document.getElementById('collegeCode').value,
+                type: document.getElementById('collegeType').value,
+                university: document.getElementById('university').value,
+                branch: document.getElementById('branch').value,
+                district: document.getElementById('district').value,
+                website: document.getElementById('website').value,
+                phone: document.getElementById('phone').value,
+                feesOpen: document.getElementById('feesOpen').value,
+                feesObc: document.getElementById('feesObc').value,
+                feesPwd: document.getElementById('feesPwd').value,
+                obc25: document.getElementById('coObc25').value,
+                pwd25: document.getElementById('coPwd25').value || '-',
+                obc24: document.getElementById('coObc24').value,
+                pwd24: document.getElementById('coPwd24').value || '-',
+                obc23: document.getElementById('coObc23').value,
+                pwd23: document.getElementById('coPwd23').value || '-',
+                high25: document.getElementById('pHigh25').value,
+                avg25: document.getElementById('pAvg25').value,
+                ratio25: document.getElementById('ratio25').value || '-',
+                high24: document.getElementById('pHigh24').value,
+                avg24: document.getElementById('pAvg24').value,
+                ratio24: document.getElementById('ratio24').value || '-',
+                high23: document.getElementById('pHigh23').value,
+                avg23: document.getElementById('pAvg23').value,
+                ratio23: document.getElementById('ratio23').value || '-',
+                recruiters: document.getElementById('recruiters').value,
+                gatePhoto: base64Image,
+                timestamp: Date.now()
+            };
+
+            // 🚀 Firebase मध्ये डेटा पुश करणे
+            database.ref('colleges').push(collegeRecord)
+                .then(() => {
+                    form.reset();
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                    alertBox.style.display = 'block';
+                    setTimeout(() => { alertBox.style.display = 'none'; }, 4000);
+                })
+                .catch((error) => {
+                    alert("एरर: " + error.message);
+                });
         };
 
-        let collegeList = JSON.parse(localStorage.getItem('quantum_master_colleges')) || [];
-        collegeList.push(collegeRecord);
-        localStorage.setItem('quantum_master_colleges', JSON.stringify(collegeList));
-
-        form.reset();
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-        alertBox.style.display = 'block';
-        setTimeout(() => { alertBox.style.display = 'none'; }, 4000);
-    };
-
-    if (file) {
-        reader.readAsDataURL(file); // फाईल वाचणे सुरू करा
-    } else {
-        alert("कृपया फोटो निवडा!");
-    }
-});
-
-        // सर्व डेटा एका ऑब्जेक्टमध्ये गोळा करणे (नवीन ३ प्लेसमेंट रेशो फील्ड्ससह)
-        const collegeRecord = {
-            name: document.getElementById('collegeName').value,
-            code: document.getElementById('collegeCode').value,
-            type: document.getElementById('collegeType').value,
-            university: document.getElementById('university').value,
-            branch: document.getElementById('branch').value,
-            
-            district: document.getElementById('district').value,
-            website: document.getElementById('website').value,
-            phone: document.getElementById('phone').value,
-            
-            feesOpen: document.getElementById('feesOpen').value,
-            feesObc: document.getElementById('feesObc').value,
-            feesPwd: document.getElementById('feesPwd').value,
-            
-            obc25: document.getElementById('coObc25').value,
-            pwd25: document.getElementById('coPwd25').value || '-',
-            obc24: document.getElementById('coObc24').value,
-            pwd24: document.getElementById('coPwd24').value || '-',
-            obc23: document.getElementById('coObc23').value,
-            pwd23: document.getElementById('coPwd23').value || '-',
-            
-            // प्लेसमेंट डेटा (Packages)
-            high25: document.getElementById('pHigh25').value,
-            avg25: document.getElementById('pAvg25').value,
-            high24: document.getElementById('pHigh24').value,
-            avg24: document.getElementById('pAvg24').value,
-            high23: document.getElementById('pHigh23').value,
-            avg23: document.getElementById('pAvg23').value,
-            
-            // 🎯 नवीन जोडलेला डेटा: ३ वर्षांचा प्लेसमेंट टक्का (%)
-            ratio25: document.getElementById('ratio25').value || '-',
-            ratio24: document.getElementById('ratio24').value || '-',
-            ratio23: document.getElementById('ratio23').value || '-',
-            
-            recruiters: document.getElementById('recruiters').value,
-            gatePhoto: document.getElementById('gatePhoto').value
-        };
-
-        // लोकलस्टोरेजमध्ये जुन्या यादीत नवीन रेकॉर्ड जोडणे
-        let collegeList = JSON.parse(localStorage.getItem('quantum_master_colleges')) || [];
-        collegeList.push(collegeRecord);
-        localStorage.setItem('quantum_master_colleges', JSON.stringify(collegeList));
-
-        // फॉर्म रीसेट करणे आणि सक्सेस मेसेज दाखवणे
-        form.reset();
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-        alertBox.style.display = 'block';
-        
-        // ४ सेकंदांनंतर मेसेज लपवणे
-        setTimeout(() => {
-            alertBox.style.display = 'none';
-        }, 4000);
+        if (file) {
+            reader.readAsDataURL(file);
+        } else {
+            alert("कृपया फोटो निवडा!");
+        }
     });
 </script>
 
