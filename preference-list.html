@@ -329,7 +329,7 @@
 <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
 
 <script>
-    // २. तुझा Firebase कॉन्फिगरेशन (जो तुला कन्सोलमधून मिळाला आहे)
+    // १. Firebase कॉन्फिगरेशन
     const firebaseConfig = {
         apiKey: "AIzaSyAkyNmrfDZnMdPmNrykdu5es8MKmKmTd7E",
         authDomain: "quantum-1926e.firebaseapp.com",
@@ -344,30 +344,28 @@
     firebase.initializeApp(firebaseConfig);
     const database = firebase.database();
 
-    // थीम मॅनेजमेंट
+    // २. थीम मॅनेजमेंट (Dark/Light Mode)
     if (localStorage.getItem('quantum_theme') === 'dark') document.body.classList.add('dark-mode');
     document.getElementById('themeToggle').addEventListener('click', () => {
         document.body.classList.toggle('dark-mode');
         localStorage.setItem('quantum_theme', document.body.classList.contains('dark-mode') ? 'dark' : 'light');
     });
 
-    // ३. मुख्य फंक्शन: Firebase मधून डेटा आणून टेबलमध्ये दाखवणे
+    // ३. मुख्य फंक्शन: टेबलमध्ये डेटा दाखवणे
     function renderTable() {
         const tbody = document.getElementById('tableBody');
         const searchQuery = document.getElementById('searchBar').value.toLowerCase();
         const branchFilter = document.getElementById('branchFilter').value;
 
-        // Firebase कडून डेटा मिळवणे (Real-time listener)
         database.ref('colleges').on('value', (snapshot) => {
             const data = snapshot.val();
             tbody.innerHTML = '';
             
             if (!data) {
-                tbody.innerHTML = '<tr><td colspan="8" style="text-align:center; padding:2rem; color:gray;">डेटा उपलब्ध नाही. कृपया "ADD COLLEGE" पेजवर जाऊन माहिती भरा.</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="8" style="text-align:center; padding:2rem; color:gray;">डेटा उपलब्ध नाही. कृपया "ADD COLLEGE" पेजवर माहिती भरा.</td></tr>';
                 return;
             }
 
-            // Firebase च्या डेटाला (Object) लिस्टमध्ये (Array) रूपांतरित करणे
             const collegeList = Object.keys(data).map(key => ({
                 id: key,
                 ...data[key]
@@ -384,7 +382,7 @@
                     tr.innerHTML = `
                         <td style="text-align: center;"><span class="rank-badge">#${index + 1}</span></td>
                         <td>
-                            <a href="${college.website}" target="_blank" class="pdf-hyperlink" onclick="openModalFromLink(event, '${college.id}')">${college.name}</a>
+                            <a href="javascript:void(0)" class="pdf-hyperlink" onclick="openModal('${college.id}')">${college.name}</a>
                             <br><small style="color:gray; font-size:0.75rem;">Code: ${college.code} | ${college.district}</small>
                         </td>
                         <td><small>${college.branch}</small></td>
@@ -398,7 +396,7 @@
                     `;
                     tbody.appendChild(tr);
 
-                    // QR Code जनरेट करणे (आधीची लायब्ररी हवीच)
+                    // QR Code जनरेट करणे
                     new QRCode(document.getElementById(qrId), {
                         text: college.website,
                         width: 40,
@@ -409,20 +407,68 @@
         });
     }
 
-    // ४. रेकॉर्ड डिलीट करणे (Firebase मधून)
+    // ४. मोडल (Modal) उघडण्याचे फंक्शन
+    function openModal(id) {
+        database.ref('colleges/' + id).once('value').then((snapshot) => {
+            const c = snapshot.val();
+            if (!c) return;
+
+            // मोडलमधील सर्व फील्ड्स भरणे
+            document.getElementById('mTitle').innerText = c.name;
+            document.getElementById('mSub').innerText = `${c.branch} | Code: ${c.code}`;
+            document.getElementById('mType').innerText = c.type;
+            document.getElementById('mUniv').innerText = c.university;
+            document.getElementById('mDist').innerText = c.district;
+            document.getElementById('mPhone').innerText = c.phone;
+            document.getElementById('mWeb').href = c.website;
+            
+            document.getElementById('mFeeOpen').innerText = "₹ " + (c.feesOpen || 0);
+            document.getElementById('mFeeObc').innerText = "₹ " + (c.feesObc || 0);
+            document.getElementById('mFeePwd').innerText = "₹ " + (c.feesPwd || 0);
+            
+            document.getElementById('mObc25').innerText = c.obc25 + "%";
+            document.getElementById('mPwd25').innerText = c.pwd25 + "%";
+            document.getElementById('mObc24').innerText = c.obc24 + "%";
+            document.getElementById('mPwd24').innerText = c.pwd24 + "%";
+            document.getElementById('mObc23').innerText = c.obc23 + "%";
+            document.getElementById('mPwd23').innerText = c.pwd23 + "%";
+
+            document.getElementById('mHigh25').innerText = c.high25 + " LPA";
+            document.getElementById('mAvg25').innerText = c.avg25 + " LPA";
+            document.getElementById('mHigh24').innerText = c.high24 + " LPA";
+            document.getElementById('mAvg24').innerText = c.avg24 + " LPA";
+            document.getElementById('mHigh23').innerText = c.high23 + " LPA";
+            document.getElementById('mAvg23').innerText = c.avg23 + " LPA";
+
+            document.getElementById('mRecruiters').innerText = c.recruiters || "माहिती नाही";
+            document.getElementById('mGatePhoto').src = c.gatePhoto || "";
+
+            // मोडल दाखवा
+            document.getElementById('infoModal').style.display = 'flex';
+        });
+    }
+
+    // मोडल बंद करणे
+    function closeModal() {
+        document.getElementById('infoModal').style.display = 'none';
+    }
+
+    // ५. रेकॉर्ड डिलीट करणे
     function deleteRecord(id) {
         if (confirm("हे कॉलेज यादीतून कायमचे काढायचे का?")) {
             database.ref('colleges/' + id).remove();
         }
     }
 
-    // सर्च आणि फिल्टर इव्हेंट्स
+    // ६. इव्हेंट्स आणि इनिशियलायझेशन
     document.getElementById('searchBar').addEventListener('input', renderTable);
     document.getElementById('branchFilter').addEventListener('change', renderTable);
+    window.onclick = function(event) {
+        let modal = document.getElementById('infoModal');
+        if (event.target == modal) closeModal();
+    }
 
-    // पेज लोड झाल्यावर टेबल रेंडर करणे
     window.onload = renderTable;
-
 </script>
 </body>
 </html>
